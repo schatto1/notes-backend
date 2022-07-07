@@ -3,6 +3,8 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
+app.use(express.static('build'))
+
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
   console.log('Path:  ', request.path)
