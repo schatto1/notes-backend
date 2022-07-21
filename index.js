@@ -2,6 +2,7 @@ const { application } = require('express')
 const express = require('express')
 const cors = require('cors')
 const app = express()
+const mongoose = require('mongoose')
 
 app.use(express.static('build'))
 
@@ -16,6 +17,21 @@ const requestLogger = (request, response, next) => {
 app.use(express.json())
 app.use(requestLogger)
 app.use(cors())
+
+// password is put here for testing
+const password = encodeURIComponent("")
+
+const url = `mongodb+srv://fullstack:${password}@cluster0.pmkf0.mongodb.net/noteApp?retryWrites=true&w=majority`
+
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  date: Date,
+  important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
 
 let notes = [
   {
@@ -43,7 +59,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-  response.json(notes)
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
 })
 
 app.get('/api/notes/:id', (request, response) => {
