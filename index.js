@@ -1,8 +1,9 @@
 const { application } = require('express')
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const mongoose = require('mongoose')
+const Note = require('./models/note')
 
 app.use(express.static('build'))
 
@@ -17,29 +18,6 @@ const requestLogger = (request, response, next) => {
 app.use(express.json())
 app.use(requestLogger)
 app.use(cors())
-
-// password is put here for testing
-const password = encodeURIComponent("")
-
-const url = `mongodb+srv://fullstack:${password}@cluster0.pmkf0.mongodb.net/noteApp?retryWrites=true&w=majority`
-
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  date: Date,
-  important: Boolean,
-})
-
-noteSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -103,7 +81,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
