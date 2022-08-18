@@ -1,7 +1,0 @@
-PUT http://localhost:3001/api/notes/62d975afc09070eff28169dc
-Content-Type: application/json
-
-{
-  "content": "This is a third note",
-  "important": false
-}
